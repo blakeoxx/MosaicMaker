@@ -9,6 +9,8 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -113,7 +115,7 @@ public class ImageProcessingThread extends Thread
 		{
 			try
 			{
-				Future<ImageFinderResult> thisFuture = completionService.take();
+				Future<ImageFinderResult> thisFuture = completionService.poll(1, TimeUnit.SECONDS);
 				if (thisFuture == null) continue;
 				ImageFinderResult finderResult = thisFuture.get();
 				subimages[finderResult.x][finderResult.y] = finderResult.imageUrl;
@@ -156,7 +158,7 @@ public class ImageProcessingThread extends Thread
 		{
 			try
 			{
-				Future<ImageLoaderResult> thisFuture = completionService.take();
+				Future<ImageLoaderResult> thisFuture = completionService.poll(1, TimeUnit.SECONDS);
 				if (thisFuture == null) continue;
 				ImageLoaderResult loaderResult = thisFuture.get();
 				int thisX = (int)Math.round(cellWidth*(loaderResult.x));
