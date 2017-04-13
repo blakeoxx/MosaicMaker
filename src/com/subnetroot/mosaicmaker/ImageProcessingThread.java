@@ -24,6 +24,7 @@ public class ImageProcessingThread extends Thread
 	private int threadcount;
 	private int mosaicWidth;
 	private int mosaicHeight;
+	private boolean useTileColorFill;
 	
 	public void run()
 	{
@@ -32,12 +33,12 @@ public class ImageProcessingThread extends Thread
 		parent.setStatus("Finding tile images...");
 		URL[][] subImageURLs = findSubImages(colorProfile);
 		parent.setStatus("Combining tile images...");
-		BufferedImage mosaic = combineSubImages(subImageURLs);
+		BufferedImage mosaic = combineSubImages(colorProfile, subImageURLs);
 		
 		parent.endProcessing(mosaic);
 	}
 	
-	public ImageProcessingThread(MosaicMaker parent, int cellsWide, int cellsHigh, BufferedImage imgBaseImage, int threadcount, int mosaicWidth, int mosaicHeight)
+	public ImageProcessingThread(MosaicMaker parent, int cellsWide, int cellsHigh, BufferedImage imgBaseImage, int threadcount, int mosaicWidth, int mosaicHeight, boolean useTileColorFill)
 	{
 		super();
 		this.parent = parent;
@@ -47,6 +48,7 @@ public class ImageProcessingThread extends Thread
 		this.threadcount = Math.max(threadcount, 1);
 		this.mosaicWidth = mosaicWidth;
 		this.mosaicHeight = mosaicHeight;
+		this.useTileColorFill = useTileColorFill;
 	}
 	
 	private Color[][] profileImageColors()
@@ -132,7 +134,7 @@ public class ImageProcessingThread extends Thread
 		return subimages;
 	}
 	
-	private BufferedImage combineSubImages(URL[][] subImageURLs)
+	private BufferedImage combineSubImages(Color[][] colorProfile, URL[][] subImageURLs)
 	{
 		BufferedImage combined = new BufferedImage(mosaicWidth, mosaicHeight, BufferedImage.TYPE_INT_ARGB);
 		Graphics g = combined.getGraphics();
@@ -167,7 +169,8 @@ public class ImageProcessingThread extends Thread
 				int nextY = (int)Math.round(cellHeight*(loaderResult.y+1));
 				if (loaderResult.image == null)
 				{
-					g.setColor(Color.black);
+					if (useTileColorFill) g.setColor(colorProfile[loaderResult.x][loaderResult.y]);
+					else g.setColor(Color.black);
 					g.fillRect(thisX, thisY, nextX-thisX, nextY-thisY);
 				}
 				else

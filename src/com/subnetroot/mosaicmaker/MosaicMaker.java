@@ -51,6 +51,7 @@ public class MosaicMaker
 	private JCheckBox chkboxLockMosaicSizeRatio;
 	private JSpinner spinThreadCount;
 	private SpinnerNumberModel spinmodelThreadCount;
+	private JCheckBox chkboxUseTileColorFill;
 	private JButton btnSaveMosaic;
 	private PreviewPanel panelPreview;
 	private JLabel labelStatus;
@@ -223,6 +224,16 @@ public class MosaicMaker
 		c.gridx = 0;
 		c.gridy = 3;
 		
+		chkboxUseTileColorFill = new JCheckBox("Fill missing subimages with tile color", true);
+		c.gridwidth = 3;
+		frame.add(chkboxUseTileColorFill, c);
+		c.gridx += c.gridwidth;
+		c.gridwidth = 1;
+		
+		// Row 5
+		c.gridx = 0;
+		c.gridy = 4;
+		
 		panelPreview = new PreviewPanel();
 		panelPreview.setMinimumSize(new Dimension(400, 300));
 		c.weightx = 1;
@@ -236,9 +247,9 @@ public class MosaicMaker
 		c.gridwidth = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		
-		// Row 5
+		// Row 6
 		c.gridx = 0;
-		c.gridy = 4;
+		c.gridy = 5;
 		
 		labelStatus = new JLabel("Ready");
 		c.gridwidth = 6;
@@ -303,11 +314,12 @@ public class MosaicMaker
 		numMosaicWidth.setEnabled(false);
 		numMosaicHeight.setEnabled(false);
 		spinThreadCount.setEnabled(false);
+		chkboxUseTileColorFill.setEnabled(false);
 		btnSaveMosaic.setEnabled(false);
 		
 		setStatus("Processing...");
 		imgCompletedMosaic = null;
-		ImageProcessingThread t = new ImageProcessingThread(this, spinmodelTileWidth.getNumber().intValue(), spinmodelTileHeight.getNumber().intValue(), imgBaseImage, spinmodelThreadCount.getNumber().intValue(), (int)numMosaicWidth.getValue(), (int)numMosaicHeight.getValue());
+		ImageProcessingThread t = new ImageProcessingThread(this, spinmodelTileWidth.getNumber().intValue(), spinmodelTileHeight.getNumber().intValue(), imgBaseImage, spinmodelThreadCount.getNumber().intValue(), (int)numMosaicWidth.getValue(), (int)numMosaicHeight.getValue(), chkboxUseTileColorFill.isSelected());
 		t.start();
 	}
 	
@@ -325,6 +337,7 @@ public class MosaicMaker
 		numMosaicWidth.setEnabled(true);
 		numMosaicHeight.setEnabled(true);
 		spinThreadCount.setEnabled(true);
+		chkboxUseTileColorFill.setEnabled(true);
 		btnSaveMosaic.setEnabled(true);
 	}
 	
