@@ -6,9 +6,9 @@ import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.http.client.utils.URIBuilder;
@@ -96,7 +96,7 @@ public class ImageProcessingThread extends Thread
 	
 	private URL[][] findSubImages(Color[][] colorProfile)
 	{
-		ExecutorService threadpool = Executors.newFixedThreadPool(threadcount);
+		ThreadPoolExecutor threadpool = (ThreadPoolExecutor)Executors.newFixedThreadPool(threadcount);
 		CompletionService<ImageFinderResult> completionService = new ExecutorCompletionService<ImageFinderResult>(threadpool);
 		URL[][] subimages = new URL[cellsWide][cellsHigh];
 		
@@ -113,7 +113,7 @@ public class ImageProcessingThread extends Thread
 		threadpool.shutdown();
 		
 		int totalComplete = 0;
-		while (!threadpool.isTerminated())
+		while (!threadpool.isTerminated() || totalComplete < threadpool.getTaskCount())
 		{
 			try
 			{
@@ -142,7 +142,7 @@ public class ImageProcessingThread extends Thread
 		float cellWidth = (float)combined.getWidth()/cellsWide;
 		float cellHeight = (float)combined.getHeight()/cellsHigh;
 		
-		ExecutorService threadpool = Executors.newFixedThreadPool(threadcount);
+		ThreadPoolExecutor threadpool = (ThreadPoolExecutor)Executors.newFixedThreadPool(threadcount);
 		CompletionService<ImageLoaderResult> completionService = new ExecutorCompletionService<ImageLoaderResult>(threadpool);
 		
 		for (int x = 0; x < cellsWide; x++)
@@ -156,7 +156,7 @@ public class ImageProcessingThread extends Thread
 		threadpool.shutdown();
 		
 		int totalComplete = 0;
-		while (!threadpool.isTerminated())
+		while (!threadpool.isTerminated() || totalComplete < threadpool.getTaskCount())
 		{
 			try
 			{
