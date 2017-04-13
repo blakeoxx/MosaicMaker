@@ -14,13 +14,3 @@ This project is a Java desktop application for generating mosaic images from a g
 ## How to Contribute
 
 Contact [blakeoxx](https://github.com/blakeoxx) to be added as a contributor to this project.
-
-## TODO
-
-- Option to fill missing subimage with average tile color instead of black
-- Filter subimages by keyword
-- Option to change mosaic modes from subimage to average color
-- Add Google Images support?
-- List subimages used to create mosaic
-- Resizing mosaic should resize preview
-- Preview should show subimages as generating is processed
