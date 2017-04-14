@@ -179,16 +179,16 @@ public class MosaicMaker
 		numMosaicWidth.setToolTipText("The width of the generated mosaic image (in pixels)");
 		numMosaicWidth.setValue(1);
 		numMosaicWidth.setColumns(4);
-		numMosaicWidth.addPropertyChangeListener("value", new PropertyChangeListener(){ public void propertyChange(PropertyChangeEvent e){ checkMosaicSize((int)numMosaicWidth.getValue(), (int)numMosaicHeight.getValue(), false); }});
+		numMosaicWidth.addPropertyChangeListener("value", new PropertyChangeListener(){ public void propertyChange(PropertyChangeEvent e){ checkMosaicSize((int)numMosaicWidth.getValue(), (int)numMosaicHeight.getValue(), false); panelPreview.setMosaicSize((int)numMosaicWidth.getValue(), (int)numMosaicHeight.getValue()); }});
 		
 		numMosaicHeight = new JFormattedTextField(mosaicSizeFormatter);
 		numMosaicHeight.setToolTipText("The height of the generated mosaic image (in pixels)");
 		numMosaicHeight.setValue(1);
 		numMosaicHeight.setColumns(4);
-		numMosaicHeight.addPropertyChangeListener("value", new PropertyChangeListener(){ public void propertyChange(PropertyChangeEvent e){ checkMosaicSize((int)numMosaicWidth.getValue(), (int)numMosaicHeight.getValue(), true); }});
+		numMosaicHeight.addPropertyChangeListener("value", new PropertyChangeListener(){ public void propertyChange(PropertyChangeEvent e){ checkMosaicSize((int)numMosaicWidth.getValue(), (int)numMosaicHeight.getValue(), true); panelPreview.setMosaicSize((int)numMosaicWidth.getValue(), (int)numMosaicHeight.getValue()); }});
 		
 		chkboxLockMosaicSizeRatio = new JCheckBox("Lock aspect ratio", true);
-		chkboxLockMosaicSizeRatio.addItemListener(new ItemListener(){ public void itemStateChanged(ItemEvent e){ checkMosaicSize((int)numMosaicWidth.getValue(), (int)numMosaicHeight.getValue(), false); }});
+		chkboxLockMosaicSizeRatio.addItemListener(new ItemListener(){ public void itemStateChanged(ItemEvent e){ checkMosaicSize((int)numMosaicWidth.getValue(), (int)numMosaicHeight.getValue(), false); panelPreview.setMosaicSize((int)numMosaicWidth.getValue(), (int)numMosaicHeight.getValue()); }});
 		
 		JPanel mosaicSizePanel = new JPanel(new BorderLayout(5, 0));
 		mosaicSizePanel.add(numMosaicWidth, BorderLayout.WEST);

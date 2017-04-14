@@ -12,6 +12,8 @@ class PreviewPanel extends JPanel
 	private static final long serialVersionUID = -4960702664844676567L;	// Make Eclipse happy. We don't actually care about serialization
 	
 	private BufferedImage imgBaseImage;
+	private int mosaicWidth;
+	private int mosaicHeight;
 	private boolean showGrid;
 	private int gridCellsWide;
 	private int gridCellsHigh;
@@ -21,6 +23,8 @@ class PreviewPanel extends JPanel
 	{
 		setBorder(BorderFactory.createLineBorder(Color.black));
 		imgBaseImage = null;
+		mosaicWidth = 1;
+		mosaicHeight = 1;
 		showGrid = true;
 		gridCellsWide = 1;
 		gridCellsHigh = 1;
@@ -38,8 +42,8 @@ class PreviewPanel extends JPanel
 		if (imgBaseImage != null)
 		{
 			// Rescale the base image to fit in the panel with a preserved aspect ratio
-			int imgWidth = imgBaseImage.getWidth();
-			int imgHeight = imgBaseImage.getHeight();
+			int imgWidth = mosaicWidth;
+			int imgHeight = mosaicHeight;
 			float widthRatio = (float)getWidth()/imgWidth;
 			float heightRatio = (float)getHeight()/imgHeight;
 			float aspectRatio;
@@ -89,6 +93,13 @@ class PreviewPanel extends JPanel
 	{
 		imgBaseImage = newImg;
 		colorProfile = null;
+		repaint();
+	}
+	
+	public void setMosaicSize(int mosaicWidth, int mosaicHeight)
+	{
+		this.mosaicWidth = mosaicWidth;
+		this.mosaicHeight = mosaicHeight;
 		repaint();
 	}
 
