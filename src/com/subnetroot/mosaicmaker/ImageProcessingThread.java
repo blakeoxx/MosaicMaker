@@ -176,6 +176,7 @@ public class ImageProcessingThread extends Thread
 				else
 				{
 					g.drawImage(loaderResult.image, thisX, thisY, nextX-thisX, nextY-thisY, null);
+					parent.setPreviewSubImage(loaderResult.x, loaderResult.y, loaderResult.image);
 					loaderResult.image = null;
 				}
 			}

@@ -18,6 +18,7 @@ class PreviewPanel extends JPanel
 	private int gridCellsWide;
 	private int gridCellsHigh;
 	private Color[][] colorProfile;
+	private BufferedImage[][] subImages;
 	
 	public PreviewPanel()
 	{
@@ -29,6 +30,7 @@ class PreviewPanel extends JPanel
 		gridCellsWide = 1;
 		gridCellsHigh = 1;
 		colorProfile = null;
+		subImages = null;
 	}
 	
 	public void paintComponent(Graphics g)
@@ -56,7 +58,7 @@ class PreviewPanel extends JPanel
 			// Draw the base image
 			g.drawImage(imgBaseImage, 0, 0, adjustedWidth, adjustedHeight, null);
 			
-			if ((showGrid || colorProfile != null) && gridCellsWide > 0 && gridCellsHigh > 0)
+			if ((showGrid || colorProfile != null || subImages != null) && gridCellsWide > 0 && gridCellsHigh > 0)
 			{
 				// Draw the grid cells
 				float cellWidth = (float)adjustedWidth/gridCellsWide;
@@ -69,18 +71,26 @@ class PreviewPanel extends JPanel
 					for (int y = 0; y < gridCellsHigh; y++)
 					{
 						int nextY = (int)Math.round(cellHeight*(y+1));
-						if (colorProfile != null && colorProfile.length >= x && colorProfile[x].length >= y && colorProfile[x][y] != null)
+						
+						if (subImages != null && subImages[x][y] != null)
 						{
-							// Draw the color profile
+							// Draw the subimage for this tile
+							g.drawImage(subImages[x][y], thisX, thisY, nextX-thisX, nextY-thisY, null);
+						}
+						else if (colorProfile != null && colorProfile.length >= x && colorProfile[x].length >= y && colorProfile[x][y] != null)
+						{
+							// Draw the color profile for this tile
 							g.setColor(colorProfile[x][y]);
 							g.fillRect(thisX, thisY, nextX-thisX, nextY-thisY);
 						}
+						
 						if (showGrid)
 						{
-							// Draw the cell border
+							// Draw the cell border for this tile
 							g.setColor(Color.red);
 							g.drawRect(thisX, thisY, nextX-thisX, nextY-thisY);
 						}
+						
 						thisY = nextY;
 					}
 					thisX = nextX;
@@ -93,6 +103,7 @@ class PreviewPanel extends JPanel
 	{
 		imgBaseImage = newImg;
 		colorProfile = null;
+		subImages = new BufferedImage[gridCellsWide][gridCellsHigh];
 		repaint();
 	}
 	
@@ -113,6 +124,7 @@ class PreviewPanel extends JPanel
 	{
 		this.gridCellsWide = gridCellsWide;
 		colorProfile = null;
+		subImages = new BufferedImage[gridCellsWide][gridCellsHigh];
 		repaint();
 	}
 
@@ -120,12 +132,20 @@ class PreviewPanel extends JPanel
 	{
 		this.gridCellsHigh = gridCellsHigh;
 		colorProfile = null;
+		subImages = new BufferedImage[gridCellsWide][gridCellsHigh];
 		repaint();
 	}
 
 	public void setColorProfile(Color[][] colorProfile)
 	{
 		this.colorProfile = colorProfile;
+		repaint();
+	}
+	
+	public void setSubImage(int x, int y, BufferedImage newImg)
+	{
+		if (subImages == null || x < 0 || x >= subImages.length || y < 0 || y >= subImages[x].length) return;
+		subImages[x][y] = newImg;
 		repaint();
 	}
 }

@@ -436,4 +436,13 @@ public class MosaicMaker
 			}
 		});
 	}
+	
+	protected synchronized void setPreviewSubImage(final int x, final int y, final BufferedImage newImg)
+	{
+		callFromSwingThread(new Runnable() {
+			public void run() {
+				panelPreview.setSubImage(x, y, newImg);
+			}
+		});
+	}
 }
