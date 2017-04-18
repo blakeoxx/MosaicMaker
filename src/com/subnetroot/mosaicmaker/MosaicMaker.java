@@ -283,6 +283,14 @@ public class MosaicMaker
 				imgBaseImage = ImageIO.read(fBaseImage);
 				if (imgBaseImage == null) throw new Exception("Image format unsupported");
 				
+				// Convert the image type to 8-bit RGB, no alpha channel
+				if (imgBaseImage.getType() != BufferedImage.TYPE_INT_RGB)
+				{
+					BufferedImage tempImage = new BufferedImage(imgBaseImage.getWidth(), imgBaseImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+					tempImage.createGraphics().drawImage(imgBaseImage, 0, 0, Color.black, null);
+					imgBaseImage = tempImage;
+				}
+				
 				panelPreview.setBaseImage(imgBaseImage);
 				numMosaicWidth.setValue(imgBaseImage.getWidth());
 				numMosaicHeight.setValue(imgBaseImage.getHeight());

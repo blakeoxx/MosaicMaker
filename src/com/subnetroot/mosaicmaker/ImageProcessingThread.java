@@ -136,7 +136,7 @@ public class ImageProcessingThread extends Thread
 	
 	private BufferedImage combineSubImages(Color[][] colorProfile, URL[][] subImageURLs)
 	{
-		BufferedImage combined = new BufferedImage(mosaicWidth, mosaicHeight, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage combined = new BufferedImage(mosaicWidth, mosaicHeight, BufferedImage.TYPE_INT_RGB);
 		Graphics g = combined.getGraphics();
 		
 		float cellWidth = (float)combined.getWidth()/cellsWide;
