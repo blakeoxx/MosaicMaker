@@ -3,6 +3,7 @@ package com.subnetroot.mosaicmaker;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -19,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
@@ -26,6 +28,7 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
@@ -51,6 +54,8 @@ public class MosaicMaker
 	private JCheckBox chkboxLockMosaicSizeRatio;
 	private JSpinner spinThreadCount;
 	private SpinnerNumberModel spinmodelThreadCount;
+	private JRadioButton radioFillModeImage;
+	private JRadioButton radioFillModeColor;
 	private JCheckBox chkboxUseTileColorFill;
 	private JButton btnSaveMosaic;
 	private PreviewPanel panelPreview;
@@ -224,21 +229,46 @@ public class MosaicMaker
 		c.gridx = 0;
 		c.gridy = 3;
 		
-		chkboxUseTileColorFill = new JCheckBox("Fill missing subimages with tile color", true);
-		c.gridwidth = 3;
-		frame.add(chkboxUseTileColorFill, c);
+		label = new JLabel("Tile Fill:");
+		frame.add(label, c);
+		c.gridx += c.gridwidth;
+		
+		radioFillModeImage = new JRadioButton("Subimage");
+		radioFillModeImage.setSelected(true);
+		radioFillModeColor = new JRadioButton("Color");
+		ButtonGroup groupFillMode = new ButtonGroup();
+		groupFillMode.add(radioFillModeImage);
+		groupFillMode.add(radioFillModeColor);
+		
+		JPanel fillModePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+		fillModePanel.add(radioFillModeImage);
+		fillModePanel.add(radioFillModeColor);
+		c.gridwidth = GridBagConstraints.REMAINDER;
+		c.fill = GridBagConstraints.NONE;
+		frame.add(fillModePanel, c);
 		c.gridx += c.gridwidth;
 		c.gridwidth = 1;
+		c.fill = GridBagConstraints.HORIZONTAL;
 		
 		// Row 5
 		c.gridx = 0;
 		c.gridy = 4;
 		
+		chkboxUseTileColorFill = new JCheckBox("Fill missing subimages with tile color", true);
+		c.gridwidth = GridBagConstraints.REMAINDER;
+		frame.add(chkboxUseTileColorFill, c);
+		c.gridx += c.gridwidth;
+		c.gridwidth = 1;
+		
+		// Row 6
+		c.gridx = 0;
+		c.gridy = 5;
+		
 		panelPreview = new PreviewPanel();
 		panelPreview.setMinimumSize(new Dimension(400, 300));
 		c.weightx = 1;
 		c.weighty = 1;
-		c.gridwidth = 6;
+		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.fill = GridBagConstraints.BOTH;
 		frame.add(panelPreview, c);
 		c.gridx += c.gridwidth;
@@ -247,12 +277,12 @@ public class MosaicMaker
 		c.gridwidth = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		
-		// Row 6
+		// Row 7
 		c.gridx = 0;
-		c.gridy = 5;
+		c.gridy = 6;
 		
 		labelStatus = new JLabel("Ready");
-		c.gridwidth = 6;
+		c.gridwidth = GridBagConstraints.REMAINDER;
 		frame.add(labelStatus, c);
 		c.gridx += c.gridwidth;
 		c.gridwidth = 1;
@@ -322,12 +352,20 @@ public class MosaicMaker
 		numMosaicWidth.setEnabled(false);
 		numMosaicHeight.setEnabled(false);
 		spinThreadCount.setEnabled(false);
+		radioFillModeImage.setEnabled(false);
+		radioFillModeColor.setEnabled(false);
 		chkboxUseTileColorFill.setEnabled(false);
 		btnSaveMosaic.setEnabled(false);
 		
+		// Choose the tile fill mode
+		int tileFillMode = 0;
+		if (radioFillModeColor.isSelected()) tileFillMode = ImageProcessingThread.FILLMODE_COLOR;
+		else if (chkboxUseTileColorFill.isSelected()) tileFillMode = ImageProcessingThread.FILLMODE_IMAGE_COLOR;
+		else tileFillMode = ImageProcessingThread.FILLMODE_IMAGE_NOCOLOR;
+		
 		setStatus("Processing...");
 		imgCompletedMosaic = null;
-		ImageProcessingThread t = new ImageProcessingThread(this, spinmodelTileWidth.getNumber().intValue(), spinmodelTileHeight.getNumber().intValue(), imgBaseImage, spinmodelThreadCount.getNumber().intValue(), (int)numMosaicWidth.getValue(), (int)numMosaicHeight.getValue(), chkboxUseTileColorFill.isSelected());
+		ImageProcessingThread t = new ImageProcessingThread(this, spinmodelTileWidth.getNumber().intValue(), spinmodelTileHeight.getNumber().intValue(), imgBaseImage, spinmodelThreadCount.getNumber().intValue(), (int)numMosaicWidth.getValue(), (int)numMosaicHeight.getValue(), tileFillMode);
 		t.start();
 	}
 	
@@ -345,6 +383,8 @@ public class MosaicMaker
 		numMosaicWidth.setEnabled(true);
 		numMosaicHeight.setEnabled(true);
 		spinThreadCount.setEnabled(true);
+		radioFillModeImage.setEnabled(true);
+		radioFillModeColor.setEnabled(true);
 		chkboxUseTileColorFill.setEnabled(true);
 		btnSaveMosaic.setEnabled(true);
 	}

@@ -24,21 +24,30 @@ public class ImageProcessingThread extends Thread
 	private int threadcount;
 	private int mosaicWidth;
 	private int mosaicHeight;
-	private boolean useTileColorFill;
+	private int tileFillMode;
+	
+	// Constants for tileFillMode
+	public static final int FILLMODE_COLOR = 0;
+	public static final int FILLMODE_IMAGE_NOCOLOR = 1;
+	public static final int FILLMODE_IMAGE_COLOR = 2;
 	
 	public void run()
 	{
 		parent.setStatus("Profiling image colors...");
 		Color[][] colorProfile = profileImageColors();
+		
 		parent.setStatus("Finding tile images...");
-		URL[][] subImageURLs = findSubImages(colorProfile);
+		URL[][] subImageURLs;
+		if (tileFillMode == FILLMODE_IMAGE_NOCOLOR || tileFillMode == FILLMODE_IMAGE_COLOR) subImageURLs = findSubImages(colorProfile);
+		else subImageURLs = new URL[cellsWide][cellsHigh];
+		
 		parent.setStatus("Combining tile images...");
 		BufferedImage mosaic = combineSubImages(colorProfile, subImageURLs);
 		
 		parent.endProcessing(mosaic);
 	}
 	
-	public ImageProcessingThread(MosaicMaker parent, int cellsWide, int cellsHigh, BufferedImage imgBaseImage, int threadcount, int mosaicWidth, int mosaicHeight, boolean useTileColorFill)
+	public ImageProcessingThread(MosaicMaker parent, int cellsWide, int cellsHigh, BufferedImage imgBaseImage, int threadcount, int mosaicWidth, int mosaicHeight, int tileFillMode)
 	{
 		super();
 		this.parent = parent;
@@ -48,7 +57,7 @@ public class ImageProcessingThread extends Thread
 		this.threadcount = Math.max(threadcount, 1);
 		this.mosaicWidth = mosaicWidth;
 		this.mosaicHeight = mosaicHeight;
-		this.useTileColorFill = useTileColorFill;
+		this.tileFillMode = tileFillMode;
 	}
 	
 	private Color[][] profileImageColors()
@@ -169,7 +178,7 @@ public class ImageProcessingThread extends Thread
 				int nextY = (int)Math.round(cellHeight*(loaderResult.y+1));
 				if (loaderResult.image == null)
 				{
-					if (useTileColorFill) g.setColor(colorProfile[loaderResult.x][loaderResult.y]);
+					if (tileFillMode == FILLMODE_COLOR || tileFillMode == FILLMODE_IMAGE_COLOR) g.setColor(colorProfile[loaderResult.x][loaderResult.y]);
 					else g.setColor(Color.black);
 					g.fillRect(thisX, thisY, nextX-thisX, nextY-thisY);
 				}
