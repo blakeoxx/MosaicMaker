@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -32,6 +33,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
@@ -106,6 +108,7 @@ public class MosaicMaker
 		c.gridy = 0;
 		
 		label = new JLabel("Base Image:");
+		label.setHorizontalAlignment(SwingConstants.RIGHT);
 		frame.add(label, c);
 		c.gridx += c.gridwidth;
 		
@@ -128,6 +131,7 @@ public class MosaicMaker
 		c.gridy = 1;
 		
 		label = new JLabel("Tile Width:");
+		label.setHorizontalAlignment(SwingConstants.RIGHT);
 		frame.add(label, c);
 		c.gridx += c.gridwidth;
 		
@@ -141,6 +145,7 @@ public class MosaicMaker
 		c.fill = GridBagConstraints.HORIZONTAL;
 		
 		label = new JLabel("Tile Height:");
+		label.setHorizontalAlignment(SwingConstants.RIGHT);
 		frame.add(label, c);
 		c.gridx += c.gridwidth;
 		
@@ -170,6 +175,7 @@ public class MosaicMaker
 		c.gridy = 2;
 		
 		label = new JLabel("Mosaic Size:");
+		label.setHorizontalAlignment(SwingConstants.RIGHT);
 		frame.add(label, c);
 		c.gridx += c.gridwidth;
 		
@@ -208,6 +214,7 @@ public class MosaicMaker
 		c.fill = GridBagConstraints.HORIZONTAL;
 		
 		label = new JLabel("Threads:");
+		label.setHorizontalAlignment(SwingConstants.RIGHT);
 		frame.add(label, c);
 		c.gridx += c.gridwidth;
 		
@@ -230,6 +237,7 @@ public class MosaicMaker
 		c.gridy = 3;
 		
 		label = new JLabel("Tile Fill:");
+		label.setHorizontalAlignment(SwingConstants.RIGHT);
 		frame.add(label, c);
 		c.gridx += c.gridwidth;
 		
@@ -240,19 +248,15 @@ public class MosaicMaker
 		groupFillMode.add(radioFillModeImage);
 		groupFillMode.add(radioFillModeColor);
 		
-		JPanel fillModePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+		JPanel fillModePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		fillModePanel.add(radioFillModeImage);
 		fillModePanel.add(radioFillModeColor);
-		c.gridwidth = GridBagConstraints.REMAINDER;
+		c.gridwidth = 2;
 		c.fill = GridBagConstraints.NONE;
 		frame.add(fillModePanel, c);
 		c.gridx += c.gridwidth;
 		c.gridwidth = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		
-		// Row 5
-		c.gridx = 0;
-		c.gridy = 4;
 		
 		chkboxUseTileColorFill = new JCheckBox("Fill missing subimages with tile color", true);
 		c.gridwidth = GridBagConstraints.REMAINDER;
@@ -260,9 +264,9 @@ public class MosaicMaker
 		c.gridx += c.gridwidth;
 		c.gridwidth = 1;
 		
-		// Row 6
+		// Row 5
 		c.gridx = 0;
-		c.gridy = 5;
+		c.gridy = 4;
 		
 		panelPreview = new PreviewPanel();
 		panelPreview.setMinimumSize(new Dimension(400, 300));
@@ -277,9 +281,9 @@ public class MosaicMaker
 		c.gridwidth = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		
-		// Row 7
+		// Row 6
 		c.gridx = 0;
-		c.gridy = 6;
+		c.gridy = 5;
 		
 		labelStatus = new JLabel("Ready");
 		c.gridwidth = GridBagConstraints.REMAINDER;
