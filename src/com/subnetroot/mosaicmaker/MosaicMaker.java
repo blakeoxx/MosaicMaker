@@ -16,6 +16,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -365,6 +366,29 @@ public class MosaicMaker
 		if (radioFillModeColor.isSelected()) tileFillMode = ImageProcessingThread.FILLMODE_COLOR;
 		else if (chkboxUseTileColorFill.isSelected()) tileFillMode = ImageProcessingThread.FILLMODE_IMAGE_COLOR;
 		else tileFillMode = ImageProcessingThread.FILLMODE_IMAGE_NOCOLOR;
+
+		// Check for an Internet connection if we need it
+		if (tileFillMode == ImageProcessingThread.FILLMODE_IMAGE_COLOR || tileFillMode == ImageProcessingThread.FILLMODE_IMAGE_NOCOLOR)
+		{
+			setStatus("Checking Internet connection...");
+
+			String serviceUrl = "https://labs.tineye.com";
+			boolean isServiceAvailable = this.isSiteAvailable(serviceUrl);
+			boolean isAuthorityAvailable = this.isSiteAvailable("https://www.iana.org/");
+
+			if (!isServiceAvailable)
+			{
+				if (!isAuthorityAvailable)
+				{
+					setStatus("Error connecting: No Internet connection");
+				}
+				else
+				{
+					setStatus("Error connecting: Could not connect to service '" + serviceUrl + "'");
+				}
+				return;
+			}
+		}
 		
 		setStatus("Processing...");
 		imgCompletedMosaic = null;
@@ -463,13 +487,28 @@ public class MosaicMaker
 			}
 		}
 	}
+
+	private boolean isSiteAvailable(String url)
+	{
+		try
+		{
+			URL testUrl = new URL(url);
+			testUrl.openStream();
+		}
+		catch (Exception e)
+		{
+			return false;
+		}
+
+		return true;
+	}
 	
 	private void callFromSwingThread(Runnable r)
 	{
 		if (SwingUtilities.isEventDispatchThread()) r.run();
 		else SwingUtilities.invokeLater(r);
 	}
-	
+
 	protected synchronized void setStatus(final String status)
 	{
 		callFromSwingThread(new Runnable() {
