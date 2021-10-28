@@ -95,7 +95,7 @@ public class ImageFinder implements Callable<ImageFinderResult>
 				String fpath = json.getJSONArray("result")
 						.getJSONObject(0)
 						.getString("filepath");
-				imageurl = new URL("http://img.tineye.com/flickr-images/?filepath=labs-flickr-public/images/"+fpath);
+				imageurl = new URL("https://img.tineye.com/flickr-images/?filepath=labs-flickr-public/images/"+fpath);
 			}
 			catch (Exception e)
 			{

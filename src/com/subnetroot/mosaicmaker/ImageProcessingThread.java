@@ -167,26 +167,17 @@ public class ImageProcessingThread extends Thread
 		int totalComplete = 0;
 		while (!threadpool.isTerminated() || totalComplete < threadpool.getTaskCount())
 		{
+			ImageLoaderResult loaderResult = null;
 			try
 			{
 				Future<ImageLoaderResult> thisFuture = completionService.poll(1, TimeUnit.SECONDS);
 				if (thisFuture == null) continue;
-				ImageLoaderResult loaderResult = thisFuture.get();
-				int thisX = (int)Math.round(cellWidth*(loaderResult.x));
-				int thisY = (int)Math.round(cellHeight*(loaderResult.y));
-				int nextX = (int)Math.round(cellWidth*(loaderResult.x+1));
-				int nextY = (int)Math.round(cellHeight*(loaderResult.y+1));
-				if (loaderResult.image == null)
+				loaderResult = thisFuture.get();
+				
+				if (loaderResult.loaderError != null)
 				{
-					if (tileFillMode == FILLMODE_COLOR || tileFillMode == FILLMODE_IMAGE_COLOR) g.setColor(colorProfile[loaderResult.x][loaderResult.y]);
-					else g.setColor(Color.black);
-					g.fillRect(thisX, thisY, nextX-thisX, nextY-thisY);
-				}
-				else
-				{
-					g.drawImage(loaderResult.image, thisX, thisY, nextX-thisX, nextY-thisY, null);
-					parent.setPreviewSubImage(loaderResult.x, loaderResult.y, loaderResult.image);
-					loaderResult.image = null;
+					// ImageLoader encountered an error. Report it
+					throw new Exception(loaderResult.loaderError);
 				}
 			}
 			catch (Exception e)
@@ -195,6 +186,29 @@ public class ImageProcessingThread extends Thread
 				if (cause != null) System.out.println("ImageLoader error: "+cause.toString());
 				else System.out.println("combineSubImages thread pool error: "+e.toString());
 			}
+			
+			if (loaderResult != null)
+			{
+				int thisX = (int)Math.round(cellWidth*(loaderResult.x));
+				int thisY = (int)Math.round(cellHeight*(loaderResult.y));
+				int nextX = (int)Math.round(cellWidth*(loaderResult.x+1));
+				int nextY = (int)Math.round(cellHeight*(loaderResult.y+1));
+				if (loaderResult.image == null)
+				{
+					// No tile image loaded. Fill the tile with a color
+					if (tileFillMode == FILLMODE_COLOR || tileFillMode == FILLMODE_IMAGE_COLOR) g.setColor(colorProfile[loaderResult.x][loaderResult.y]);
+					else g.setColor(Color.black);
+					g.fillRect(thisX, thisY, nextX-thisX, nextY-thisY);
+				}
+				else
+				{
+					// Tile image was loaded. Draw the image
+					g.drawImage(loaderResult.image, thisX, thisY, nextX-thisX, nextY-thisY, null);
+					parent.setPreviewSubImage(loaderResult.x, loaderResult.y, loaderResult.image);
+					loaderResult.image = null;
+				}
+			}
+			
 			parent.setStatus("Combining tile images "+(++totalComplete)+"/"+(cellsWide*cellsHigh));
 		}
 		
