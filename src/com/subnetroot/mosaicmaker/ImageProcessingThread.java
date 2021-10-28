@@ -114,7 +114,7 @@ public class ImageProcessingThread extends Thread
 			for (int y = 0; y < cellsHigh; y++)
 			{
 				CloseableHttpClient httpclient = HttpClients.createDefault();
-				URIBuilder partialuri = new URIBuilder().setScheme("http").setHost("labs.tineye.com").setPath("/multicolr/rest/color_search/");
+				URIBuilder partialuri = new URIBuilder().setScheme("https").setHost("labs.tineye.com").setPath("/multicolr/rest/color_search/");
 				completionService.submit(new ImageFinder(x, y, httpclient, partialuri, colorProfile[x][y]));
 			}
 		}
